@@ -1,9 +1,5 @@
 import  express  from "express";
-import  {registerUsers,
-    loginUsers,
-    authMiddleware,
-    logoutUsers
-} from "../../controllers/auth/auth-controller.js";
+import {registerUsers,loginUsers,logoutUsers,authMiddleware} from "../../controllers/auth/auth-controller.js";
 
 
 const router = express.Router();
@@ -19,5 +15,4 @@ message :'Authenticated  user!',
 user
  })
 })
-
 export default router;
