@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
 import { URL } from "@/components/path";
 import { GlobalApiCall } from "../GlobalApiCall";
 
@@ -68,12 +67,14 @@ export const logoutUser = createAsyncThunk(
   "auth/logout",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
+      const response = await await GlobalApiCall(
         `${URL.baseURL}/auth/logout`,
+        'POST',
         {},
-        {
-          withCredentials: true,
-        }
+        null,
+        null,
+        "application/json",
+        true
       );
 
       // Clear localStorage on logout
@@ -92,28 +93,36 @@ export const checkAuth = createAsyncThunk(
   "auth/checkAuth",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
+      // First check if we have a token
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        throw new Error("No auth token found");
+      }
+
+      const response = await GlobalApiCall(
         `${URL.baseURL}/auth/check-auth`,
-        {
-          withCredentials: true,
-          headers: {
-            "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-          },
-        }
+        'GET',
+        {},
+        null,
+        null,
+        "application/json",
+        true
       );
 
-      // If the server confirms the user is authenticated, update localStorage
-      localStorage.setItem("isAuthenticated", true);
-      localStorage.setItem("userInfo", JSON.stringify(response.data.user));
-
-      return response.data; // Return the response data
+      // The response already contains success, message, and user directly
+      if (response.success) {
+        localStorage.setItem("isAuthenticated", "true");
+        localStorage.setItem("userInfo", JSON.stringify(response.user));
+        return response; // Return the entire response
+      } else {
+        throw new Error("Authentication check failed");
+      }
     } catch (error) {
-      // If the user is not authenticated, clear localStorage
+      // Clear auth state on failure
       localStorage.removeItem("authToken");
       localStorage.removeItem("userInfo");
-      localStorage.setItem("isAuthenticated", false);
-
-      return rejectWithValue(error.response?.data || error.message);
+      localStorage.setItem("isAuthenticated", "false");
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -184,15 +193,15 @@ const authSlice = createSlice({
       })
       .addCase(checkAuth.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.isAuthenticated = true; // Set authentication state
-        state.user = action.payload.user; // Set user data from the response
+        state.isAuthenticated = true; 
+        state.user = action.payload.user; 
         state.error = null;
       })
       .addCase(checkAuth.rejected, (state, action) => {
         state.isLoading = false;
-        state.isAuthenticated = false; // Reset authentication state
-        state.user = null; // Clear user data
-        state.error = action.payload; // Set error message
+        state.isAuthenticated = false; 
+        state.user = null; 
+        state.error = action.payload; 
       });
   },
 });

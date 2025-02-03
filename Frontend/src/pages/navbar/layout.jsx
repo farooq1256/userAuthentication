@@ -11,13 +11,13 @@ export default function Navbar() {
 
   // Get authentication state from Redux store
   const { isAuthenticated, user } = useSelector((state) => state.auth);
-console.log(isAuthenticated,'6969669696');
+// console.log(isAuthenticated,'6969669696');
 
   // Handle logout
   const handleLogout = () => {
 
     dispatch(logoutUser()).then(() => {
-   
+   navigate('/')
     });
   };
   
@@ -31,8 +31,7 @@ console.log(isAuthenticated,'6969669696');
           {/* Desktop Menu */}
           <div className="hidden md:flex space-x-8">
             {[
-              { name: "Read Books", href: "/" },
-              { name: "Add Books", href: "/add-books" },
+         
             ].map((item) => (
               <motion.div key={item.name} whileHover={{ scale: 1.05 }}>
                 <Link
@@ -57,7 +56,7 @@ console.log(isAuthenticated,'6969669696');
             ) : (
               <motion.div whileHover={{ scale: 1.05 }}>
                 <Link
-                  to="/auth/login"
+                  to="/"
                   className="text-white px-3 py-2 rounded-md text-lg font-medium hover:bg-white hover:text-indigo-600 transition duration-300 ease-in-out"
                 >
                   Login
@@ -87,8 +86,7 @@ console.log(isAuthenticated,'6969669696');
           className="md:hidden bg-indigo-700"
         >
           {[
-            { name: "Home", href: "/" },
-            { name: "Add Books", href: "/add-books" },
+            { name: "Home", href: "/home" },
           ].map((item) => (
             <Link
               key={item.name}
@@ -109,7 +107,7 @@ console.log(isAuthenticated,'6969669696');
             </button>
           ) : (
             <Link
-              to="/auth/login"
+              to="/"
               className="block text-white px-4 py-2 hover:bg-white hover:text-indigo-600 transition duration-300 ease-in-out"
             >
               Login

@@ -46,12 +46,12 @@ export const GlobalApiCall = async (
           const status = error.response.status;
   
           // Handle specific error cases
-          if (status === 401) {
+          if (status === 419) {
             toast.error("Your session has expired. Please log in again.");
             localStorage.removeItem("authToken");
             localStorage.removeItem("userInfo");
             // Redirect to login page if needed
-            window.location.href = "/login";
+            window.location.href = "/";
           } else if (status >= 500) {
             toast.error("Something went wrong on the server.");
           } else {

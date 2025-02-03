@@ -24,7 +24,7 @@ function AuthLogin() {
         toast({
          title : data?.payload?.message
         })
-        navigate('/')
+        navigate('/home')
        }else{
         toast({
           variant: "destructive",

@@ -20,13 +20,13 @@ function AuthRegister() {
   function onSubmit(event) {
     event.preventDefault();
     dispatch(registerUser(formData)).then((data) => {
-      console.log(data);
+      // console.log(data);
 
     if(data?.payload?.success){
       toast({
        title : data?.payload?.message
       })
-      navigate('/auth/login')
+      navigate('/')
     }else{
       toast({
         variant: "destructive",
@@ -49,7 +49,7 @@ function AuthRegister() {
           Already have an account
           <Link
             className="font-medium ml-2 text-primary hover:underline"
-            to="/auth/login"
+            to="/"
           >
             Login
           </Link>
