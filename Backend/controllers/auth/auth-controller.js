@@ -115,25 +115,52 @@ const logoutUsers = (req, res, next) => {
     next(createHttpError(500, 'An error occurred during logout.'));
   }
 };
-// auth middleware
-const authMiddleware = async (req ,res,next)=>{
-  const token = req.cookies.token;
-  if(!token){
-    return res.status(401).json({
-      success:false,
-      message:"Unauthorized"
-    })
+
+
+// ... existing code ...
+
+const authMiddleware = async (req, res, next) => {
+  try {
+      const authHeader = req.headers.authorization;
+      // console.log('Auth Header:', authHeader); // Debug log
+      
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+          return res.status(401).json({
+              success: false,
+              message: "Unauthorized - No Bearer token provided"
+          });
+      }
+
+      // Extract the token
+      const token = authHeader.split(' ')[1];
+      // console.log('Extracted token:', token); // Debug log
+      
+      try {
+          // Verify token
+          const decoded = jwt.verify(token, process.env.JWT_SECRET);
+          req.user = decoded;
+          next();
+      } catch (err) {
+          if (err.name === 'TokenExpiredError') {
+              return res.status(419).json({
+                  success: false,
+                  message: 'Authentication Timeout - Token has expired',
+                  isExpired: true
+              });
+          }
+          throw err;
+      }
+  } catch (error) {
+      console.error('Auth error:', error);
+      res.status(401).json({
+          success: false,
+          message: 'Unauthorized - Invalid token!',
+          details: error.message
+      });
   }
-  try{
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next()
-  }catch(error){
-    res.status(401).json({
-    success : false,
-    message :'Unauthorised user!'
-    })
-  }
-}
+};
+
+// ... existing code ...
+
 
 export { registerUsers, loginUsers, logoutUsers,authMiddleware };

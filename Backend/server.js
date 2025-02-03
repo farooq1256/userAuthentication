@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import authRoutes from './routes/auth/auth-routes.js';
+import todoRoutes from './routes/todos/todo-routes.js';
 import globalErrorHandler from './middlewares/globalErrorHandler.js';
 import createHttpError from "http-errors";
 
@@ -45,7 +46,7 @@ app.use(
 app.use(express.json());
 app.use(cookieParser())
 app.use('/api/auth', authRoutes);
-
+app.use('/api/todos', todoRoutes);
 app.use(globalErrorHandler)
 
 
